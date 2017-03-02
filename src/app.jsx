@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
+import { Button } from 'react-bootstrap';
+import { Jumbotron } from 'react-bootstrap';
 
 class App extends React.Component {
   constructor (props) {
@@ -33,10 +35,12 @@ class App extends React.Component {
       return <li key={index}><b>{message.from}:</b>{message.body}</li>
     })
     return (
-      <div>
-        <h1>Hello, World!</h1>
-        <input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
-        {messages}
+      <div class='container'>
+        <Jumbotron>
+          <h1 class='text-center'>Hello, World!</h1>
+          <input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
+          {messages}
+        </Jumbotron>
       </div>
     )
   }
