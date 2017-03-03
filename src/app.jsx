@@ -35,7 +35,6 @@ class App extends React.Component {
     })
     return (
       <div>
-        <Button>I'm a button</Button>
         <h1 class='text-center'>Hello, World!</h1>
         <input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
         {messages}
@@ -44,14 +43,6 @@ class App extends React.Component {
   }
 }
 
-const Button = styled.button`
-  background: white;
-  color: palevioletred;
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid palevioletred;
-  border-radius: 3px;
-`;
+
 
 ReactDOM.render(<App/>, document.getElementById('root'));
