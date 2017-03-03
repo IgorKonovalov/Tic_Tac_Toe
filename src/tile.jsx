@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 
+
+let socket;
+
+
 export default class Tile extends React.Component {
   constructor(props){
     super(props);
@@ -44,18 +48,18 @@ export default class Tile extends React.Component {
 
   render() {
     return (
-      <Tile onClick={this._clickTile}>
+      <TileContainer onClick={this._clickTile}>
         <TileText>{this.props.value}</TileText>
-      </Tile>
+      </TileContainer>
     )
   }
 }
 
-const Tile = styled.div`
+const TileContainer = styled.div`
   background-color: #000000;
-  display: flex;
   flex: 1;
-  flex-direction: row;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 150px;
