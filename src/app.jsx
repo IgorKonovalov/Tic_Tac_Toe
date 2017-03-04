@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 import Board from './board.jsx';
-let socket;
+
+// let socket;
 let playerValue;
 let playerNum;
 let gameCode;
@@ -40,7 +41,7 @@ class Chat extends React.Component {
     })
     return (
       <div>
-        <h1 class='text-center'>Hello, World!</h1>
+        <h1>Hello, World!</h1>
         <input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
         {messages}
       </div>
@@ -57,23 +58,29 @@ class TicTacToeApp extends React.Component {
       createCode : '',
       joinCode: '',
       player: 0,
-      navigator : props.navigator
+      clicked: false
     }
+    // this.socket = io('/');
+
     this._createRoom = this._createRoom.bind(this);
     this._joinRoom = this._joinRoom.bind(this);
-    this._dismissKeyboard = this._dismissKeyboard.bind(this); // ??
+    this._handleClick = this._handleClick.bind(this);
   }
 
-  // componentWillMount(){ // ??
-  //   //Must specifiy 'jsonp: false' since react native doesn't provide the dom
-  //   //and thus wouldn't support creating an iframe/script tag
-  //   socket = io('http://tictactoe2.zhenjie.xyz',{jsonp: false});
-  // }
+  componentWillMount(){
+    this.socket = io('/');
+  }
+
 
   componentDidMount(){
-    this.socket = io('/');
-    this.socket.on("game start", (data) => {
+    this.socket.on('game start', (data) => {
       gameCode = this.state.createCode
+    });
+  }
+
+  _handleClick() {
+    this.setState({
+      clicked: true
     });
   }
 
@@ -89,7 +96,7 @@ class TicTacToeApp extends React.Component {
       createCode: roomCode,
       player: 1
     });
-    socket.emit("create room", roomCode);
+    this.socket.emit("create room", roomCode);
   }
 
   _joinRoom(){
@@ -102,9 +109,6 @@ class TicTacToeApp extends React.Component {
     });
   }
 
-  _dismissKeyboard(){
-    this._input.blur();
-  }
 
   render() {
     let showRoom;
@@ -116,24 +120,25 @@ class TicTacToeApp extends React.Component {
         </div>
     }
     return (
-    <div onClick={this._dismissKeyboard}>
+    <div>
       <Container>
         <InnerContainer onClick={this._createRoom}>
           <div>
-            <TextSmall>Create Game Room</TextSmall>
+            <JoinGame>Create Game Room</JoinGame>
           </div>
         </InnerContainer>
         {showRoom}
         <BottomInnerContainer>
-          <JoinGame>Join Game</JoinGame>
+          <TextSmall>Join Game</TextSmall>
           <Input
           onChange={(joinCode) => this.setState({joinCode})}
           ref={(input) => this._input = input}
           />
         </BottomInnerContainer>
-        <JoinGameContainer onClick={this._joinRoom}>
+        <JoinGameContainer >
           <div >
-            <TextSmall>Join Game</TextSmall>
+            <JoinGame onClick={this._joinRoom, this._handleClick}>Join Game</JoinGame>
+            {this.state.clicked ? <Board socket={this.socket} playerValue={playerValue} playerNum={playerNum} gameCode={gameCode} /> : null}
           </div>
         </JoinGameContainer>
       </Container>
@@ -142,13 +147,16 @@ class TicTacToeApp extends React.Component {
   }
 }
 
+// Стили
+
 const TextBig = styled.p`
+  color: black;
   font-size: 30px;
   text-align: center;
 `;
 
 const TextSmall = styled.p`
-  color: white;
+  color: black;
   font-size: 12px;
 `;
 
@@ -196,7 +204,4 @@ const JoinGameContainer = styled.div`
 `;
 
 
-
-
 ReactDOM.render(<TicTacToeApp />, document.getElementById('root'));
-// ReactDOM.render(<Chat/>, document.getElementById('board'));

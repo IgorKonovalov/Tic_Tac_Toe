@@ -25,9 +25,19 @@ const blankBoard = [
 // объект игроков
 
 const players = {
-  one: { id: 1, char: 'X', message: 'Первый игрок выиграл!' },
-  two: { id: 2, char: 'O', message: 'Второй игрок выиграл!' }
+  one: {
+    id: 1,
+    char: 'X',
+    message: 'Первый игрок выиграл!'
+  },
+  two: {
+    id: 2,
+    char: 'O',
+    message: 'Второй игрок выиграл!'
+  }
 };
+
+
 
 // структура данных, описывающая игры:
 //
@@ -46,8 +56,8 @@ let gameBoardStore = {};
 
 // функция transpose принимает оригинальный массив и возвращает транспонированый - столбцы становятся строками, а строки — столбцами
 
-function transpose(board) {
-  return board[0].map((_, index) => board.map(row => row[index]));
+function transpose(array) {
+    return array[0].map((_, index) => array.map(row => row[index]));
 }
 
 // функция diagonals принимает оригинальный массив и возвращает массив диагоналей
@@ -92,13 +102,13 @@ function checkWin(board) {
   if (rowContainsChar(players.two.char, board)) {
     return { message: players.two.message, gamestate: false };
   }
-  return { message: 'Ничья!', gameState: anyEmptyCells(gameboard) };
+  return { message: 'Ничья!', gameState: anyEmptyCells(board) };
 }
 
 // возврат доски в начальное состояние
 
 function resetBoard(gameRoom) {
-  return gameBoardStore[gameRoom].board = blankBoard;
+  return gameBoardStore[gameRoom].gameBoard = blankBoard;
 }
 
 
@@ -111,12 +121,13 @@ io.on('connection', socket => {
       let playerOne = socket.id;
       console.log('создаем комнату');
       gameBoardStore[roomCode] = {};
-      gameBoardStore[roomCode]['gameBoard'] = blankBoard;
-      gameBoardStore[roomCode]['player1'] = playerOne;
+      gameBoardStore[roomCode].gameBoard = {};
+      gameBoardStore[roomCode].gameBoard = blankBoard;
+      gameBoardStore[roomCode].player1 = playerOne;
       socket.join(roomCode);
       console.log(roomCode);
       console.log('отправляем комнату');
-      io.to(socket.id).emit('room created', true);
+      io.in(roomCode).emit('room created', true);
     }
   });
 
@@ -127,19 +138,21 @@ io.on('connection', socket => {
       if (roomCode in gameBoardStore) {
         // Проверяем что socket.id клиентов не совпадают.
         if (socket.id !== gameBoardStore[roomCode]['player1']) {
+          console.log('второй игрок присоединен');
           // Присоединяем второго игрока.
           let playerTwo = socket.id;
           gameBoardStore[roomCode]['player2'] = playerTwo;
+          console.log('теперь со вторым игроком: ', gameBoardStore[roomCode]);
           socket.join(roomCode);
-          io.in(roomCode).emit('game start', 'haha');
+          io.in(roomCode).emit('game start', 'haha'); // отсылаем сообщение участникам комнаты
         }
       }
   });
 
-  // инициализируем и передаем доску 'update board'
+  // инициализируем и передаем игрокам обновление доски => 'update board'
 
   socket.on('click', data => {
-    let playerTurn = data.value === players.one.char ? 1 : 2;
+    let playerTurn = data.value == players.one.char ? 2 : 1;
 
     gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = data.value;
 
@@ -148,11 +161,11 @@ io.on('connection', socket => {
       playerTurn: playerTurn
     };
 
-    console.log('обновляю объект... ', dataObject);
-    io.to(data.gameCode).emit('board update', dataObject);
+    console.log('шлю на обновление: ', dataObject);
+    io.in(data.gameCode).emit('update board', dataObject);
+
     // Тестируем на выигрыш.
     let winResult = checkWin(gameBoardStore[data.gameCode].gameBoard);
-    console.log(winResult.gameState);
 
     if (!winResult.gameState) {
       gameBoardStore[data.gameCode].gameBoard = blankBoard;
@@ -161,24 +174,6 @@ io.on('connection', socket => {
     }
   });
 
-  // обновляем состояние доски
-
-  socket.on('update board', data => {
-    gameBoardStore[data.gameRoom].board = data.gameBoard;
-    checkWin(gameBoardStore[data.gameRoom].board);
-
-    io.in(data.gameRoom).emit('get board updates', {
-      game: gameBoardStore[data.gameRoom].board,
-      result: checkWin(gameBoardStore[data.gameRoom].board)
-    });
-  });
-
-  // обнуляем доску
-
-  socket.on('reset board', data => {
-    resetBoard(data);
-    io.in(data).emit('reset update');
-  });
 
   // удаляем комнату если клиент теряет связь с сервером
 
@@ -186,10 +181,8 @@ io.on('connection', socket => {
     console.log('disconnected!');
 
     Object.keys(gameBoardStore).forEach((gameCode) => {
-      console.log(gameCode);
-
       if (gameBoardStore[gameCode].player1 === socket.id || gameBoardStore[gameCode].player2 === socket.id) {
-        delete gameBoardStore[gameCode];
+        gameBoardStore[gameCode] = {};
         console.log('комната ', gameCode, ' удалена');
         return;
       }

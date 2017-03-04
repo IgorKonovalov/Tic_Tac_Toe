@@ -22,7 +22,7 @@ export default class Board extends React.Component {
   }
 
   componentDidMount(){
-  	this.state.socket.on("board update", (data) => {
+  	this.state.socket.on("update board", (data) => {
   		console.log(data);
 		this.setState({
   			gameBoard: data.gameBoard,

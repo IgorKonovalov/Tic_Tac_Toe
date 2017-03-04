@@ -20,5 +20,10 @@
     "styled-components": "^1.4.4",
     "webpack": "^2.2.1",
     "webpack-dev-middleware": "^1.10.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "should": "^11.2.0"
   }
 }
