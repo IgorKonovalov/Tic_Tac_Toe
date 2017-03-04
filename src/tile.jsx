@@ -30,6 +30,9 @@ export default class Tile extends React.Component {
 
     console.log("player num ", this.props.playerNum);
     console.log("player turn ", this.props.playerTurn);
+    console.log('row', this.state.row);
+    console.log('col', this.state.col);
+    console.log('gamecode', this.state.gameCode);
 
     if (this.props.playerNum == this.props.playerTurn){
       this.setState({
@@ -56,15 +59,18 @@ export default class Tile extends React.Component {
 }
 
 const TileContainer = styled.div`
-  background-color: #000000;
+  background-color: #000;
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 150px;
-  border-width: 1px;
+  width: 100px;
+  border: 1px solid white;
   border-color: #FFFFFF;
+  &:hover {
+    box-shadow: inset 0px 0px 16px rgba(255,255,255,1);
+  }
 `;
 
 const TileText = styled.p`

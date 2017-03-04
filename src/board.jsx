@@ -82,24 +82,13 @@ const Container = styled.div`
   display: block;
   flex: 1;
   align-items: center;
-  margin-top: 150px;
+  margin-top: 50px;
+  margin-bottom: 50px;
 `;
 
 const RowContainer = styled.div`
+  display: flex;
+  width: 450px;
   flex-direction: row;
   align-items: center;
 `;
-
-
-
-const styles= {
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		marginTop: 150
-	},
-	rowContainer:{
-		flexDirection: 'row',
-		alignItems: 'center',
-	}
-}

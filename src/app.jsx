@@ -60,7 +60,6 @@ class TicTacToeApp extends React.Component {
       player: 0,
       clicked: false
     }
-    // this.socket = io('/');
 
     this._createRoom = this._createRoom.bind(this);
     this._joinRoom = this._joinRoom.bind(this);
@@ -96,11 +95,11 @@ class TicTacToeApp extends React.Component {
       createCode: roomCode,
       player: 1
     });
-    this.socket.emit("create room", roomCode);
+    this.socket.emit('create room', roomCode);
   }
 
   _joinRoom(){
-    socket.emit("join room", this.state.joinCode);
+    socket.emit('join room', this.state.joinCode);
     playerValue = 'O';
     playerNum = 2;
     this.setState({
@@ -129,7 +128,6 @@ class TicTacToeApp extends React.Component {
         </InnerContainer>
         {showRoom}
         <BottomInnerContainer>
-          <TextSmall>Join Game</TextSmall>
           <Input
           onChange={(joinCode) => this.setState({joinCode})}
           ref={(input) => this._input = input}
