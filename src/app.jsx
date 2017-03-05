@@ -1,15 +1,14 @@
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 import Board from './board.jsx';
 
-// let socket;
 let playerValue;
 let playerNum;
 let gameCode;
 
-class Chat extends React.Component {
+class Chat extends Component {
   constructor (props) {
     super(props);
     this.state = { messages: [] };
@@ -50,7 +49,7 @@ class Chat extends React.Component {
 }
 
 
-class TicTacToeApp extends React.Component {
+class TicTacToeApp extends Component {
 
   constructor(props){
     super(props);
@@ -58,12 +57,16 @@ class TicTacToeApp extends React.Component {
       createCode : '',
       joinCode: '',
       player: 0,
-      clicked: false
+      start: false,
+      playerValue: '',
+      playerNum: '',
+      gameCode: ''
     }
 
-    this._createRoom = this._createRoom.bind(this);
-    this._joinRoom = this._joinRoom.bind(this);
-    this._handleClick = this._handleClick.bind(this);
+    this.createRoom = this.createRoom.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentWillMount(){
@@ -73,36 +76,41 @@ class TicTacToeApp extends React.Component {
 
   componentDidMount(){
     this.socket.on('game start', (data) => {
-      gameCode = this.state.createCode
+      console.log('игра стартовала');
+      this.setState({ gameCode: this.state.createCode });
+      this.setState({ start: true });
     });
   }
 
-  _handleClick() {
-    this.setState({
-      clicked: true
-    });
+  handleClick() {
+    this.setState({ start: true });
   }
 
-  _createRoom(){
+  handleChange(event) {
+    this.setState({ joinCode: event.target.value });
+  }
+
+  createRoom(){
     let codeOne = parseInt(Math.random() * (9 - 1) + 1);
     let codeTwo = parseInt(Math.random() * (9 - 1) + 1);
     let codeThree = parseInt(Math.random() * (9 - 1) + 1);
     let codeFour = parseInt(Math.random() * (9 - 1) + 1);
     let roomCode = "" + codeOne + codeTwo + codeThree + codeFour;
-    playerValue = 'X';
-    playerNum = 1;
     this.setState({
+      playerValue: 'X',
+      playerNum: 1,
       createCode: roomCode,
       player: 1
     });
     this.socket.emit('create room', roomCode);
   }
 
-  _joinRoom(){
-    socket.emit('join room', this.state.joinCode);
-    playerValue = 'O';
-    playerNum = 2;
+  joinRoom(){
+    this.socket.emit('join room', this.state.joinCode);
+
     this.setState({
+      playerValue: 'O',
+      playerNum: 2,
       player: 2,
       createCode: this.state.joinCode,
     });
@@ -121,7 +129,7 @@ class TicTacToeApp extends React.Component {
     return (
     <div>
       <Container>
-        <InnerContainer onClick={this._createRoom}>
+        <InnerContainer onClick={this.createRoom}>
           <div>
             <JoinGame>Create Game Room</JoinGame>
           </div>
@@ -129,14 +137,13 @@ class TicTacToeApp extends React.Component {
         {showRoom}
         <BottomInnerContainer>
           <Input
-          onChange={(joinCode) => this.setState({joinCode})}
-          ref={(input) => this._input = input}
+          value={this.state.joinCode} onChange={this.handleChange}
           />
         </BottomInnerContainer>
         <JoinGameContainer >
           <div >
-            <JoinGame onClick={this._joinRoom, this._handleClick}>Join Game</JoinGame>
-            {this.state.clicked ? <Board socket={this.socket} playerValue={playerValue} playerNum={playerNum} gameCode={gameCode} /> : null}
+            <JoinGame onClick={this.joinRoom}>Join Game</JoinGame>
+            {this.state.start ? <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} /> : null}
           </div>
         </JoinGameContainer>
       </Container>
@@ -149,13 +156,14 @@ class TicTacToeApp extends React.Component {
 
 const TextBig = styled.p`
   color: black;
-  font-size: 30px;
-  text-align: center;
+  font-size: 20px;
+  text-align: left;
+  padding-left: 10px;
 `;
 
 const TextSmall = styled.p`
   color: black;
-  font-size: 12px;
+  font-size: 16px;
 `;
 
 const Container = styled.div`
@@ -163,15 +171,14 @@ const Container = styled.div`
   align-items: center;
   background-color: #FFFFFF;
   padding: 10px;
-  padding-top: 150px;
+  padding-top: 20px;
 `;
 
 const InnerContainer = styled.div`
   justify-content: center;
   padding-left: 10px;
   padding-right: 10px;
-  border-width:  1px;
-  height: 70px;
+  height: 20px;
 `;
 
 const BottomInnerContainer = styled.div`

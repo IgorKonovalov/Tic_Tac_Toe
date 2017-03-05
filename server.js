@@ -12,11 +12,11 @@ const io = socketIo(server);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Логика и данные на сервере
+// Логика и обработка данных
 
 // прототип доски
 
-const blankBoard = [
+let blankBoard = [
   ['', '', ''],
   ['', '', ''],
   ['', '', '']
@@ -168,8 +168,13 @@ io.on('connection', socket => {
     let winResult = checkWin(gameBoardStore[data.gameCode].gameBoard);
 
     if (!winResult.gameState) {
-      gameBoardStore[data.gameCode].gameBoard = blankBoard;
+      gameBoardStore[data.gameCode].gameBoard = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+      ];;
       console.log(winResult.message);
+      console.log(gameBoardStore[data.gameCode].gameBoard);
       io.to(data.gameCode).emit('game end', winResult.message);
     }
   });

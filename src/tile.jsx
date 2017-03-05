@@ -1,13 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, {Component} from 'react';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 
 
-let socket;
 
-
-export default class Tile extends React.Component {
+export default class Tile extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -17,7 +14,7 @@ export default class Tile extends React.Component {
       row: props.row,
       gameCode: props.gameCode,
     }
-    this._clickTile = this._clickTile.bind(this);
+    this.clickTile = this.clickTile.bind(this);
   }
 
   componentDidMount(){
@@ -26,7 +23,7 @@ export default class Tile extends React.Component {
     })
   }
 
-  _clickTile(){
+  clickTile(){
 
     console.log("player num ", this.props.playerNum);
     console.log("player turn ", this.props.playerTurn);
@@ -51,7 +48,7 @@ export default class Tile extends React.Component {
 
   render() {
     return (
-      <TileContainer onClick={this._clickTile}>
+      <TileContainer onClick={this.clickTile}>
         <TileText>{this.props.value}</TileText>
       </TileContainer>
     )

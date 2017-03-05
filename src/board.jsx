@@ -1,10 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, {Component} from 'react';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 import Tile from './tile.jsx';
 
-export default class Board extends React.Component {
+export default class Board extends Component {
 
   constructor(props){
     super(props);
@@ -18,7 +17,7 @@ export default class Board extends React.Component {
       socket: props.socket,
       playerTurn : '1'
     }
-    this._renderBoard = this._renderBoard.bind(this);
+    this.renderBoard = this.renderBoard.bind(this);
   }
 
   componentDidMount(){
@@ -39,7 +38,7 @@ export default class Board extends React.Component {
   	})
   }
 
-  _renderBoard(){
+  renderBoard(){
   	return this.state.gameBoard.map((rows, rowIndex) => {
   		let row = rows.map((value, colIndex) => {
   			let coord = colIndex.toString() + rowIndex.toString();
@@ -62,7 +61,6 @@ export default class Board extends React.Component {
   	});
   }
 
-
   render() {
     return (
 		<Container>
@@ -72,7 +70,7 @@ export default class Board extends React.Component {
 		<p>
 			{this.state.message}
 		</p>
-			{this._renderBoard()}
+			{this.renderBoard()}
 		</Container>
     )
   }
