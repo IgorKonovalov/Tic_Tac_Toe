@@ -109,7 +109,7 @@ class TicTacToeApp extends Component {
       <ChatContainer>
         <span>Введите свое имя: </span>
         <Input onChange={this.handleChangeName}/>
-        {this.state.start ? <Chat socket={this.socket} name={this.state.playerName}/> : null}
+        {this.state.start ? <Chat socket={this.socket} gameCode={this.state.gameCode} name={this.state.playerName}/> : null}
       </ChatContainer>
     </AppContainer>
     );

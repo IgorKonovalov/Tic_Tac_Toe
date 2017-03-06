@@ -215,9 +215,9 @@ io.on('connection', socket => {
 
   socket.on('message', data => {
     if (data.from == 'Me') {
-      data.from = socket.id.slice(3);
+      data.from = socket.id;
     }
-    socket.broadcast.emit('message', {
+    socket.broadcast.to(data.gameCode).emit('message', {
       body: data.body,
       from: data.from
     })

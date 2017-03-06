@@ -10,6 +10,7 @@ export default class Chat extends Component {
     this.state = {
       messages: [],
       socket: props.socket,
+      gameCode: props.gameCode,
       name: props.name
     };
   }
@@ -24,6 +25,7 @@ export default class Chat extends Component {
     const body = event.target.value;
     if (event.keyCode === 13 && body) {
       const message = {
+        gameCode: this.state.gameCode,
         body,
         from: this.state.name || 'Me'
       };
