@@ -40,7 +40,7 @@ class Chat extends Component {
     })
     return (
       <div>
-        <h1>Hello, World!</h1>
+        <h1>Chat!</h1>
         <input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
         {messages}
       </div>
@@ -65,7 +65,6 @@ class TicTacToeApp extends Component {
 
     this.createRoom = this.createRoom.bind(this);
     this.joinRoom = this.joinRoom.bind(this);
-    this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -80,10 +79,9 @@ class TicTacToeApp extends Component {
       this.setState({ gameCode: this.state.createCode });
       this.setState({ start: true });
     });
-  }
-
-  handleClick() {
-    this.setState({ start: true });
+    this.socket.on('game end', () => {
+      this.socket.emit('reset board', this.state);
+    })
   }
 
   handleChange(event) {
@@ -131,7 +129,7 @@ class TicTacToeApp extends Component {
       <Container>
         <InnerContainer onClick={this.createRoom}>
           <div>
-            <JoinGame>Create Game Room</JoinGame>
+            <button>Create Game Room</button>
           </div>
         </InnerContainer>
         {showRoom}
@@ -140,12 +138,10 @@ class TicTacToeApp extends Component {
           value={this.state.joinCode} onChange={this.handleChange}
           />
         </BottomInnerContainer>
-        <JoinGameContainer >
-          <div >
-            <JoinGame onClick={this.joinRoom}>Join Game</JoinGame>
-            {this.state.start ? <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} /> : null}
-          </div>
-        </JoinGameContainer>
+        <InnerContainer>
+          <button onClick={this.joinRoom}>Join Game</button>
+        </InnerContainer>
+        {this.state.start ? <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} /> : null}
       </Container>
     </div>
     );
@@ -185,28 +181,18 @@ const BottomInnerContainer = styled.div`
   align-items: center;
   padding-left: 10px;
   padding-right: 10px;
-  margin-top: 70px;
+  margin-top: 20px;
 `;
 
 const Input = styled.input`
   height: 40px;
+  font-size: 20px;
   border-width: 1px;
-  width: 150px;
+  width: 120px;
   padding: 10px;
   margin-bottom: 20px;
 `;
-const JoinGame = styled.button`
-  padding-left: 10px;
-  padding-right: 10px;
-  border-width: 1px;
-`;
-const JoinGameContainer = styled.div`
-  justify-content: 'center';
-  padding-left: 10px;
-  padding-right: 10px;
-  border-width: 1px;
-  height: 50px;
-`;
 
 
-ReactDOM.render(<TicTacToeApp />, document.getElementById('root'));
+ReactDOM.render(<TicTacToeApp />, document.getElementById('board'));
+ReactDOM.render(<Chat />, document.getElementById('chat'));

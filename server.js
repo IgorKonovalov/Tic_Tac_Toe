@@ -146,36 +146,37 @@ io.on('connection', socket => {
           socket.join(roomCode);
           io.in(roomCode).emit('game start', 'haha'); // отсылаем сообщение участникам комнаты
         }
+      } else {
+        console.log('в списке не присутствует искомая комната');
       }
   });
 
   // инициализируем и передаем игрокам обновление доски => 'update board'
 
   socket.on('click', data => {
-    let playerTurn = data.value == players.one.char ? 2 : 1;
+    if (data.gameCode in gameBoardStore) {
+      let playerTurn = data.value == players.one.char ? 2 : 1;
 
-    gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = data.value;
+      gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = data.value;
 
-    let dataObject = {
-      gameBoard: gameBoardStore[data.gameCode].gameBoard,
-      playerTurn: playerTurn
-    };
+      let dataObject = {
+        gameBoard: gameBoardStore[data.gameCode].gameBoard,
+        playerTurn: playerTurn
+      };
 
-    console.log('шлю на обновление: ', dataObject);
-    io.in(data.gameCode).emit('update board', dataObject);
+      console.log('шлю на обновление: ', dataObject);
+      io.in(data.gameCode).emit('update board', dataObject);
 
-    // Тестируем на выигрыш.
-    let winResult = checkWin(gameBoardStore[data.gameCode].gameBoard);
+      // Тестируем на выигрыш.
+      let winResult = checkWin(gameBoardStore[data.gameCode].gameBoard);
 
-    if (!winResult.gameState) {
-      gameBoardStore[data.gameCode].gameBoard = [
-        ['', '', ''],
-        ['', '', ''],
-        ['', '', '']
-      ];;
-      console.log(winResult.message);
-      console.log(gameBoardStore[data.gameCode].gameBoard);
-      io.to(data.gameCode).emit('game end', winResult.message);
+      if (!winResult.gameState) {
+        gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = blankBoard;
+        console.log(winResult.message);
+        io.to(data.gameCode).emit('game end', winResult.message);
+      }
+    } else {
+      console.log('комната отсутствует, попробуйте перезагрузить страницу');
     }
   });
 
@@ -184,9 +185,14 @@ io.on('connection', socket => {
 
   socket.on('disconnect', () => {
     console.log('disconnected!');
-
     Object.keys(gameBoardStore).forEach((gameCode) => {
       if (gameBoardStore[gameCode].player1 === socket.id || gameBoardStore[gameCode].player2 === socket.id) {
+        let dataObject = {
+          gameBoard: blankBoard,
+          playerTurn: 0
+        };
+        io.in(gameCode).emit('game end', 'второй игрок вышел, вы выиграли');
+        io.in(gameCode).emit('update board', dataObject);
         gameBoardStore[gameCode] = {};
         console.log('комната ', gameCode, ' удалена');
         return;
@@ -194,13 +200,16 @@ io.on('connection', socket => {
     });
   });
 
+  socket.on('reset board', data => {
+    gameBoardStore[data.gameCode] = {};
+  })
+
   // функционал чата
 
   socket.on('message', body => {
-    console.log('message sent from', socket.id);
     socket.broadcast.emit('message', {
       body,
-      from: socket.id.slice(8)
+      from: socket.id.slice(4)
     })
   })
 })

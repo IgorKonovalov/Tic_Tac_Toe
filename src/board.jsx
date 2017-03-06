@@ -21,16 +21,15 @@ export default class Board extends Component {
   }
 
   componentDidMount(){
-  	this.state.socket.on("update board", (data) => {
-  		console.log(data);
-		this.setState({
-  			gameBoard: data.gameBoard,
-  			playerTurn: data.playerTurn
-  		})
+  	this.state.socket.on('update board', (data) => {
+  		this.setState({
+    			gameBoard: data.gameBoard,
+    			playerTurn: data.playerTurn
+    		})
   	})
 
-  	this.state.socket.on("game end", (data) =>{
-  		// когда игра закончилась, меняем playerturn на 0
+  	this.state.socket.on('game end', (data) =>{
+  		// когда игра закончилась, меняем playerturn на 0, чтобы игроки не могли ходить
   		this.setState({
   			playerTurn: 0,
   			message: data
@@ -38,7 +37,8 @@ export default class Board extends Component {
   	})
   }
 
-  renderBoard(){
+
+  renderBoard() {
   	return this.state.gameBoard.map((rows, rowIndex) => {
   		let row = rows.map((value, colIndex) => {
   			let coord = colIndex.toString() + rowIndex.toString();
@@ -64,13 +64,14 @@ export default class Board extends Component {
   render() {
     return (
 		<Container>
-		<p>
-			Room Code: {this.state.gameCode}
-		</p>
-		<p>
-			{this.state.message}
-		</p>
-			{this.renderBoard()}
+  		<p>
+  			Room Code: {this.state.gameCode}
+  		</p>
+  		<p>
+  			{this.state.message}
+  		</p>
+  		{this.renderBoard()}
+
 		</Container>
     )
   }
@@ -82,6 +83,7 @@ const Container = styled.div`
   align-items: center;
   margin-top: 50px;
   margin-bottom: 50px;
+  width: 450px;
 `;
 
 const RowContainer = styled.div`

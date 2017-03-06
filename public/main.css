@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#board, #chat {
+  width: 45%;
+}
+
+li {
+  list-style-type: none;
+}

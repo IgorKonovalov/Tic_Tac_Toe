@@ -17,16 +17,16 @@ export default class Tile extends Component {
     this.clickTile = this.clickTile.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.setState({
       value: this.props.value
     })
   }
 
-  clickTile(){
+  clickTile() {
 
-    console.log("player num ", this.props.playerNum);
-    console.log("player turn ", this.props.playerTurn);
+    console.log('player num', this.props.playerNum);
+    console.log('player turn', this.props.playerTurn);
     console.log('row', this.state.row);
     console.log('col', this.state.col);
     console.log('gamecode', this.state.gameCode);
@@ -35,7 +35,7 @@ export default class Tile extends Component {
       this.setState({
        value: this.state.playerValue
       })
-      this.state.socket.emit("click", {
+      this.state.socket.emit('click', {
         gameCode: this.state.gameCode,
         row: this.state.row,
         col: this.state.col,
@@ -56,21 +56,22 @@ export default class Tile extends Component {
 }
 
 const TileContainer = styled.div`
-  background-color: #000;
+  background-color: hsl(240, 100%, 5%);
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 150px;
-  width: 100px;
-  border: 1px solid white;
-  border-color: #FFFFFF;
+  width: 150px;
+  border-radius: 5px;
+  border: 1px solid #FFF;
+  border-color: #FFF;
   &:hover {
-    box-shadow: inset 0px 0px 16px rgba(255,255,255,1);
+    box-shadow: inset 0px 0px 16px #FFF;
   }
 `;
 
 const TileText = styled.p`
-  color: #FFFFFF;
-  font-size : 40px;
+  font: 100px sans-serif;
+  color: #FFF;
 `;
