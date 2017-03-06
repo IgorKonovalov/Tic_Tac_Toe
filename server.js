@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // прототип доски
 
-let blankBoard = [
+const blankBoard = [
   ['', '', ''],
   ['', '', ''],
   ['', '', '']
@@ -120,12 +120,18 @@ io.on('connection', socket => {
     if (roomCode) {
       let playerOne = socket.id;
       console.log('создаем комнату');
+      delete gameBoardStore[roomCode];
       gameBoardStore[roomCode] = {};
-      gameBoardStore[roomCode].gameBoard = {};
-      gameBoardStore[roomCode].gameBoard = blankBoard;
+      gameBoardStore[roomCode].gameBoard = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+      ];
       gameBoardStore[roomCode].player1 = playerOne;
       socket.join(roomCode);
       console.log(roomCode);
+      console.log('все комнаты', gameBoardStore);
+      console.log('доска новой комнаты', gameBoardStore[roomCode]);
       console.log('отправляем комнату');
       io.in(roomCode).emit('room created', true);
     }
@@ -135,7 +141,7 @@ io.on('connection', socket => {
 
   socket.on('join room', roomCode => {
       // Проверяем что комната уже присутствует в списке.
-      if (roomCode in gameBoardStore) {
+      if (gameBoardStore.hasOwnProperty(roomCode)) {
         // Проверяем что socket.id клиентов не совпадают.
         if (socket.id !== gameBoardStore[roomCode]['player1']) {
           console.log('второй игрок присоединен');
@@ -193,15 +199,16 @@ io.on('connection', socket => {
         };
         io.in(gameCode).emit('game end', 'второй игрок вышел, вы выиграли');
         io.in(gameCode).emit('update board', dataObject);
-        gameBoardStore[gameCode] = {};
+        delete gameBoardStore[gameCode];
         console.log('комната ', gameCode, ' удалена');
+        console.log(gameBoardStore);
         return;
       }
     });
   });
 
   socket.on('reset board', data => {
-    gameBoardStore[data.gameCode] = {};
+    gameBoardStore[data.gameCode] = blankBoard;
   })
 
   // функционал чата
