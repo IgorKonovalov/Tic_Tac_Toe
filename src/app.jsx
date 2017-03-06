@@ -3,51 +3,11 @@ import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
 import styled from 'styled-components';
 import Board from './board.jsx';
+import Chat from './chat.jsx';
 
 let playerValue;
 let playerNum;
 let gameCode;
-
-class Chat extends Component {
-  constructor (props) {
-    super(props);
-    this.state = { messages: [] };
-  }
-
-  componentDidMount () {
-    this.socket = io('/');
-    this.socket.on('message', message => {
-      this.setState({ messages: [message, ...this.state.messages]});
-    })
-  }
-
-  handleSubmit = event => {
-    const body = event.target.value;
-    if (event.keyCode === 13 && body) {
-      const message = {
-        body,
-        from: 'Me'
-      };
-      this.setState({ messages: [message, ...this.state.messages]});
-      this.socket.emit('message', body);
-      event.target.value = '';
-    }
-  }
-
-  render () {
-    const messages = this.state.messages.map((message, index) => {
-      return <li key={index}><b>{message.from}:</b>{message.body}</li>
-    })
-    return (
-      <div>
-        <h1>Chat!</h1>
-        <input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
-        {messages}
-      </div>
-    )
-  }
-}
-
 
 class TicTacToeApp extends Component {
 
@@ -60,12 +20,14 @@ class TicTacToeApp extends Component {
       start: false,
       playerValue: '',
       playerNum: '',
-      gameCode: ''
+      gameCode: '',
+      playerName: ''
     }
 
     this.createRoom = this.createRoom.bind(this);
     this.joinRoom = this.joinRoom.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeJoin = this.handleChangeJoin.bind(this);
+    this.handleChangeName = this.handleChangeName.bind(this);
   }
 
   componentWillMount(){
@@ -84,9 +46,13 @@ class TicTacToeApp extends Component {
     })
   }
 
-  handleChange(event) {
+  handleChangeJoin(event) {
     this.setState({ joinCode: event.target.value });
   }
+  handleChangeName(event) {
+    this.setState({ playerName: event.target.value });
+  }
+
 
   createRoom(){
     let codeOne = parseInt(Math.random() * (9 - 1) + 1);
@@ -124,26 +90,28 @@ class TicTacToeApp extends Component {
           <TextBig>Ожидаем противника...</TextBig>
         </div>
     }
+
     return (
-    <div>
-      <Container>
+    <AppContainer>
+      <TicTacToeContainer>
         <InnerContainer onClick={this.createRoom}>
-          <div>
-            <button>Create Game Room</button>
-          </div>
+          <button>Create Game Room</button>
         </InnerContainer>
         {showRoom}
         <BottomInnerContainer>
-          <Input
-          value={this.state.joinCode} onChange={this.handleChange}
-          />
+          <Input value={this.state.joinCode} onChange={this.handleChangeJoin} />
         </BottomInnerContainer>
         <InnerContainer>
           <button onClick={this.joinRoom}>Join Game</button>
         </InnerContainer>
         {this.state.start ? <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} /> : null}
-      </Container>
-    </div>
+      </TicTacToeContainer>
+      <ChatContainer>
+        <span>Введите свое имя: </span>
+        <Input onChange={this.handleChangeName}/>
+        {this.state.start ? <Chat socket={this.socket} name={this.state.playerName}/> : null}
+      </ChatContainer>
+    </AppContainer>
     );
   }
 }
@@ -162,13 +130,25 @@ const TextSmall = styled.p`
   font-size: 16px;
 `;
 
-const Container = styled.div`
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;
+
+const TicTacToeContainer = styled.div`
+  width: 45%;
   flex: 1;
   align-items: center;
   background-color: #FFFFFF;
   padding: 10px;
   padding-top: 20px;
 `;
+
+const ChatContainer = styled.div`
+  width: 45%;
+`;
+
 
 const InnerContainer = styled.div`
   justify-content: center;
@@ -194,5 +174,4 @@ const Input = styled.input`
 `;
 
 
-ReactDOM.render(<TicTacToeApp />, document.getElementById('board'));
-ReactDOM.render(<Chat />, document.getElementById('chat'));
+ReactDOM.render(<TicTacToeApp />, document.getElementById('root'));

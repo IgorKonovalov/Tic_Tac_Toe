@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 
 export default class Tile extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       socket : props.socket,

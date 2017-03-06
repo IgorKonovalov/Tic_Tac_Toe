@@ -213,10 +213,13 @@ io.on('connection', socket => {
 
   // функционал чата
 
-  socket.on('message', body => {
+  socket.on('message', data => {
+    if (data.from == 'Me') {
+      data.from = socket.id.slice(3);
+    }
     socket.broadcast.emit('message', {
-      body,
-      from: socket.id.slice(4)
+      body: data.body,
+      from: data.from
     })
   })
 })
