@@ -30,19 +30,21 @@ export default class Tile extends Component {
     console.log('row', this.state.row);
     console.log('col', this.state.col);
     console.log('gamecode', this.state.gameCode);
-
-    if (this.props.playerNum == this.props.playerTurn){
-      this.setState({
-       value: this.state.playerValue
-      })
-      this.state.socket.emit('click', {
-        gameCode: this.state.gameCode,
-        row: this.state.row,
-        col: this.state.col,
-        value: this.state.playerValue
-      });
-    } else {
-      console.log("cannot press")
+    console.log('value', this.props.value);
+    if (this.props.value == '') {
+      if (this.props.playerNum == this.props.playerTurn){
+        this.setState({
+         value: this.state.playerValue
+        })
+        this.state.socket.emit('click', {
+          gameCode: this.state.gameCode,
+          row: this.state.row,
+          col: this.state.col,
+          value: this.state.playerValue
+        });
+      } else {
+        console.log("cannot press")
+      }
     }
   }
 
