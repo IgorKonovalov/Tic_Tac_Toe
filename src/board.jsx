@@ -64,12 +64,12 @@ export default class Board extends Component {
   render() {
     return (
 		<Container>
-  		<p>
+  		<Label>
   			Room Code: {this.state.gameCode}
-  		</p>
-  		<p>
+  		</Label>
+  		<Label>
   			{this.state.message}
-  		</p>
+  		</Label>
   		{this.renderBoard()}
 
 		</Container>
@@ -77,11 +77,20 @@ export default class Board extends Component {
   }
 }
 
+const Label = styled.label`
+  flex-basis: 100%;
+  display: block;
+  font-size: 2em;
+  margin-bottom: .3em;
+  margin-top: .3em;
+  text-align: center;
+  color: #1a237e;
+`;
+
 const Container = styled.div`
   display: block;
   flex: 1;
   align-items: center;
-  margin-top: 50px;
   margin-bottom: 50px;
   width: 450px;
 `;

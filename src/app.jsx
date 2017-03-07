@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Board from './board.jsx';
 import Chat from './chat.jsx';
 
@@ -214,13 +214,13 @@ const AppContainer = styled.div`
 const TicTacToeContainer = styled.div`
   width: 45%;
   min-width: 450px;
-  flex: 1;
+  flex-grow: 1;
   align-items: center;
 `;
 
 const ChatContainer = styled.div`
-  width: 45%;
-  min-width: 450px;
+  flex-grow: 2;
+  min-width: 150px;
 `;
 
 

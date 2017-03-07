@@ -211,7 +211,7 @@ io.on('connection', socket => {
     gameBoardStore[data.gameCode] = blankBoard;
   })
 
-  // функционал чата
+  // Chat functionality
 
   socket.on('message', data => {
     if (data.from == 'Me') {

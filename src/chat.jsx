@@ -39,21 +39,40 @@ export default class Chat extends Component {
 
   render () {
     const messages = this.state.messages.map((message, index) => {
-      return <li key={index}>{message.playerValue}: <B2>{message.from}</B2>: {message.body}</li>
+      return <li key={index}>{message.playerValue}: <B>{message.from}</B>: {message.body}</li>
     })
     return (
       <div>
-        <h1>Chat!</h1>
-        <input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
+        <Input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
         {messages}
       </div>
     )
   }
 }
 
+const Input = styled.input`
+  flex-grow: 2;
+  padding: 1em;
+  font-size: 1em;
+  width: 100%;
+  margin-right: 0.5rem;
+  margin-bottom: 0.3em;
+  border: none;
+  background-color: #e8eaf6;
+  color: #1a237e;
+`;
+
+const Label = styled.label`
+  flex-basis: 100%;
+  display: block;
+  font-size: 2em;
+  margin-bottom: 1em;
+  margin-top: 1em;
+  text-align: center;
+  color: #1a237e;
+`;
+
+
 const B = styled.b`
   color: red;
-`;
-const B2 = styled(B)`
-  font-size: 20px;
 `;
