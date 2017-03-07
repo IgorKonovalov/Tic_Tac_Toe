@@ -28,12 +28,12 @@ const players = {
   one: {
     id: 1,
     char: 'X',
-    message: 'Первый игрок выиграл!'
+    message: 'First player won!'
   },
   two: {
     id: 2,
     char: 'O',
-    message: 'Второй игрок выиграл!'
+    message: 'Second player won!'
   }
 };
 
@@ -102,7 +102,7 @@ function checkWin(board) {
   if (rowContainsChar(players.two.char, board)) {
     return { message: players.two.message, gamestate: false };
   }
-  return { message: 'Ничья!', gameState: anyEmptyCells(board) };
+  return { message: 'Draw!', gameState: anyEmptyCells(board) };
 }
 
 // возврат доски в начальное состояние
@@ -119,7 +119,7 @@ io.on('connection', socket => {
   socket.on('create room', roomCode => {
     if (roomCode) {
       let playerOne = socket.id;
-      console.log('создаем комнату');
+      console.log('creating room');
       delete gameBoardStore[roomCode];
       gameBoardStore[roomCode] = {};
       gameBoardStore[roomCode].gameBoard = [
@@ -130,9 +130,9 @@ io.on('connection', socket => {
       gameBoardStore[roomCode].player1 = playerOne;
       socket.join(roomCode);
       console.log(roomCode);
-      console.log('все комнаты', gameBoardStore);
-      console.log('доска новой комнаты', gameBoardStore[roomCode]);
-      console.log('отправляем комнату');
+      console.log('all rooms', gameBoardStore);
+      console.log('board of new room', gameBoardStore[roomCode]);
+      console.log('sending room');
       io.in(roomCode).emit('room created', true);
     }
   });
@@ -144,16 +144,16 @@ io.on('connection', socket => {
       if (gameBoardStore.hasOwnProperty(roomCode)) {
         // Проверяем что socket.id клиентов не совпадают.
         if (socket.id !== gameBoardStore[roomCode]['player1']) {
-          console.log('второй игрок присоединен');
+          console.log('second player joined');
           // Присоединяем второго игрока.
           let playerTwo = socket.id;
           gameBoardStore[roomCode]['player2'] = playerTwo;
-          console.log('теперь со вторым игроком: ', gameBoardStore[roomCode]);
+          console.log('now with second player: ', gameBoardStore[roomCode]);
           socket.join(roomCode);
           io.in(roomCode).emit('game start', 'haha'); // отсылаем сообщение участникам комнаты
         }
       } else {
-        console.log('в списке не присутствует искомая комната');
+        console.log('There is no such room in room list');
       }
   });
 
@@ -170,7 +170,7 @@ io.on('connection', socket => {
         playerTurn: playerTurn
       };
 
-      console.log('шлю на обновление: ', dataObject);
+      console.log('Sending for update: ', dataObject);
       io.in(data.gameCode).emit('update board', dataObject);
 
       // Тестируем на выигрыш.
@@ -178,11 +178,10 @@ io.on('connection', socket => {
 
       if (!winResult.gameState) {
         gameBoardStore[data.gameCode].gameBoard[data.row][data.col] = blankBoard;
-        console.log(winResult.message);
         io.to(data.gameCode).emit('game end', winResult.message);
       }
     } else {
-      console.log('комната отсутствует, попробуйте перезагрузить страницу');
+      console.log('room is absent, try reloading page');
     }
   });
 
@@ -197,10 +196,10 @@ io.on('connection', socket => {
           gameBoard: blankBoard,
           playerTurn: 0
         };
-        io.in(gameCode).emit('game end', 'второй игрок вышел, вы выиграли');
+        io.in(gameCode).emit('game end', 'Second player is disconnected');
         io.in(gameCode).emit('update board', dataObject);
         delete gameBoardStore[gameCode];
-        console.log('комната ', gameCode, ' удалена');
+        console.log('room ', gameCode, ' deleted');
         console.log(gameBoardStore);
         return;
       }

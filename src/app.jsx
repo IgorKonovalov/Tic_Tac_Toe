@@ -131,7 +131,7 @@ class TicTacToeApp extends Component {
       showGameAndChat =
         <AppContainer>
           <TicTacToeContainer>
-            <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} />
+            <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} name={this.state.playerName}/>
           </TicTacToeContainer>
           <ChatContainer>
             <Chat socket={this.socket} playerValue={this.state.playerValue} gameCode={this.state.gameCode} name={this.state.playerName}/>
@@ -152,6 +152,16 @@ class TicTacToeApp extends Component {
 
 // Styled-Components
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+`;
+
 const Form = styled.form`
   display: flex;
   flex-flow: row wrap;
@@ -161,6 +171,7 @@ const Form = styled.form`
   margin: 10em auto;
   border-radius: 3px;
   box-shadow: 2px 2px 4px -2px #1a237e;
+  animation: ${fadeIn} 1s linear;
 `;
 
 const Input = styled.input`
@@ -168,6 +179,7 @@ const Input = styled.input`
   padding: 1em;
   font-size: 1.5em;
   margin-right: 0.5rem;
+  margin-bottom: 0.2em;
   border: none;
   background-color: #e8eaf6;
   color: #1a237e;
@@ -182,8 +194,10 @@ const Label = styled.label`
   text-align: center;
   color: #1a237e;
 `;
+
 const Button = styled.button`
   padding: 0.5em 1.2em;
+  margin-bottom: 0.2em;
   font-size: 1.5em;
   flex-grow: 1;
   border-radius: 2px;
@@ -212,8 +226,7 @@ const AppContainer = styled.div`
 `;
 
 const TicTacToeContainer = styled.div`
-  width: 45%;
-  min-width: 450px;
+  width: 450px;
   flex-grow: 1;
   align-items: center;
 `;

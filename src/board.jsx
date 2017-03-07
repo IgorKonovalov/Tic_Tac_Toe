@@ -62,13 +62,21 @@ export default class Board extends Component {
   }
 
   render() {
+    let message;
+    if ((this.state.message == 'First player won!' && this.props.playerValue == 'X')||(this.state.message == 'Second player won!' && this.props.playerValue == 'O')) {
+      message = 'You won!';
+    } else if ((this.state.message == 'First player won!' && this.props.playerValue == 'O')||(this.state.message == 'Second player won!' && this.props.playerValue == 'X')) {
+      message = 'You lost!';
+    } else if (this.state.message == 'Draw!'){
+      message = 'It\'s a draw!'
+    }
     return (
 		<Container>
   		<Label>
   			Room Code: {this.state.gameCode}
   		</Label>
   		<Label>
-  			{this.state.message}
+  			{message}
   		</Label>
   		{this.renderBoard()}
 
@@ -89,7 +97,7 @@ const Label = styled.label`
 
 const Container = styled.div`
   display: block;
-  flex: 1;
+  flex: 0;
   align-items: center;
   margin-bottom: 50px;
   width: 450px;

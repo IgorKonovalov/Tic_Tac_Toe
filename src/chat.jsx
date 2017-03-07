@@ -39,22 +39,26 @@ export default class Chat extends Component {
 
   render () {
     const messages = this.state.messages.map((message, index) => {
-      return <li key={index}>{message.playerValue}: <B>{message.from}</B>: {message.body}</li>
+      return <li key={index}>{message.playerValue}: <B>{message.from} </B>: {message.body}</li>
     })
     return (
-      <div>
+      <Container>
         <Input type='text' placeholder='type a message...' onKeyUp={this.handleSubmit} />
         {messages}
-      </div>
+      </Container>
     )
   }
 }
 
+const Container = styled.div`
+  width: 450px;
+`;
 const Input = styled.input`
   flex-grow: 2;
   padding: 1em;
   font-size: 1em;
   width: 100%;
+  margin-left: auto;
   margin-right: 0.5rem;
   margin-bottom: 0.3em;
   border: none;
@@ -74,5 +78,5 @@ const Label = styled.label`
 
 
 const B = styled.b`
-  color: red;
+  color: #1a237e;
 `;

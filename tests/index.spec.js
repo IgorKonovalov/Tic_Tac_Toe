@@ -121,7 +121,7 @@ describe("The tic tac toe test", function() {
                 })
 
                 client2.on("game end", function(data) {
-                    should(data).be.eql("Первый игрок выиграл!");
+                    should(data).be.eql("First player won!");
                     client1.disconnect();
                     client2.disconnect();
                     done();
@@ -161,7 +161,7 @@ describe("The tic tac toe test", function() {
                 })
 
                 client2.on("game end", function(data) {
-                    should(data).be.eql("Второй игрок выиграл!");
+                    should(data).be.eql("Second player won!");
                     client1.disconnect();
                     client2.disconnect();
                     done();
@@ -184,7 +184,7 @@ describe("The tic tac toe test", function() {
             client1.on("game start", function(data) {
 
                 client2.on("game end", function(data) {
-                    should(data).be.eql("Ничья!");
+                    should(data).be.eql("Draw!");
                     client1.disconnect();
                     client2.disconnect();
                     done();
