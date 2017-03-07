@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import io from 'socket.io-client';
 import styled from 'styled-components';
+import Sound from 'react-sound';
 
 
 
@@ -13,6 +14,7 @@ export default class Tile extends Component {
       col:  props.col,
       row: props.row,
       gameCode: props.gameCode,
+      sound: false
     }
     this.clickTile = this.clickTile.bind(this);
   }
@@ -30,9 +32,17 @@ export default class Tile extends Component {
     console.log('row', this.state.row);
     console.log('col', this.state.col);
     console.log('gamecode', this.state.gameCode);
-    console.log('value', this.props.value);
+
     if (this.props.value == '') {
       if (this.props.playerNum == this.props.playerTurn){
+        this.state.sound =
+          <Sound
+            url="./sound/click.mp3"
+            playStatus={Sound.status.PLAYING}
+            playFromPosition={0}
+            onLoading={this.handleSongLoading}
+            onPlaying={this.handleSongPlaying}
+            onFinishedPlaying={this.handleSongFinishedPlaying} />
         this.setState({
          value: this.state.playerValue
         })
@@ -51,6 +61,7 @@ export default class Tile extends Component {
   render() {
     return (
       <TileContainer onClick={this.clickTile}>
+        {this.state.sound}
         <TileText>{this.props.value}</TileText>
       </TileContainer>
     )
