@@ -102,35 +102,41 @@ class TicTacToeApp extends Component {
       showRoom =
         <div>
           <h2>{this.state.createCode}</h2>
-          <h2>Waiting for opponent...</h2>
+          <p>Waiting for opponent...</p>
         </div>
     }
     let showNameInput;
     if (!this.state.nameSubmitted) {
       showNameInput =
-        <form onSubmit={this.handleSubmitName}>
-          <label>
-            Name:
-            <input type="text" value={this.state.playerName} onChange={this.handleChangeName} />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
+        <Form onSubmit={this.handleSubmitName}>
+          <Label>Name:</Label>
+          <Input type="text" placeholder='Enter your name' value={this.state.playerName} onChange={this.handleChangeName} />
+          <Button type="submit">Submit</Button>
+        </Form>
     }
     let showCreateRoom;
     if (!this.state.start && this.state.nameSubmitted) {
       showCreateRoom =
         <div>
-          <div>
-            <button onClick={this.createRoom}>Create Game Room</button>
-          </div>
-          <form onSubmit={this.handleSubmitGame}>
-            <label>
-              Insert code here:
-              <input type='text' value={this.state.joinCode} onChange={this.handleChangeJoin} />
-            </label>
-            <button type="submit" onClick={this.joinRoom}>Join Game</button>
-          </form>
+          <Form onSubmit={this.handleSubmitGame}>
+            <Button onClick={this.createRoom}>Create Game Room</Button>
+            <Label>{showRoom}</Label>
+            <Input type='text' placeholder='Insert code here...' value={this.state.joinCode} onChange={this.handleChangeJoin} />
+            <Button type="submit" onClick={this.joinRoom}>Join Game</Button>
+          </Form>
         </div>
+    }
+    let showGameAndChat;
+    if (this.state.start) {
+      showGameAndChat =
+        <AppContainer>
+          <TicTacToeContainer>
+            <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} />
+          </TicTacToeContainer>
+          <ChatContainer>
+            <Chat socket={this.socket} playerValue={this.state.playerValue} gameCode={this.state.gameCode} name={this.state.playerName}/>
+          </ChatContainer>
+        </AppContainer>
     }
 
     return (
@@ -138,21 +144,65 @@ class TicTacToeApp extends Component {
       {showNameInput}
       {showCreateRoom}
       {showRoom}
-      {this.state.start ?
-      <AppContainer>
-        <TicTacToeContainer>
-          <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} />
-        </TicTacToeContainer>
-        <ChatContainer>
-          <Chat socket={this.socket} gameCode={this.state.gameCode} name={this.state.playerName}/>
-        </ChatContainer>
-      </AppContainer> : null}
+      {showGameAndChat}
     </div>
     );
   }
 }
 
-// Стили
+// Styled-Components
+
+const Form = styled.form`
+  display: flex;
+  flex-flow: row wrap;
+  border: 0.1em solid #1a237e;
+  padding: 2em;
+  max-width: 40em;
+  margin: 10em auto;
+  border-radius: 3px;
+  box-shadow: 2px 2px 4px -2px #1a237e;
+`;
+
+const Input = styled.input`
+  flex-grow: 2;
+  padding: 1em;
+  font-size: 1.5em;
+  margin-right: 0.5rem;
+  border: none;
+  background-color: #e8eaf6;
+  color: #1a237e;
+`;
+
+const Label = styled.label`
+  flex-basis: 100%;
+  display: block;
+  font-size: 2em;
+  margin-bottom: 1em;
+  margin-top: 1em;
+  text-align: center;
+  color: #1a237e;
+`;
+const Button = styled.button`
+  padding: 0.5em 1.2em;
+  font-size: 1.5em;
+  flex-grow: 1;
+  border-radius: 2px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background-color: #e8eaf6;
+  box-shadow: 1px 1px 1px -1px #7986cb;
+  color: #1a237e;
+  &:hover {
+    background-color: #3f51b5;
+    color: #e8eaf6;
+    box-shadow: 2px 2px 2px #1a237e;
+  }
+  &:active {
+    background-color: #283593;
+    color: #e8eaf6;
+  }
+`;
 
 const AppContainer = styled.div`
   display: flex;

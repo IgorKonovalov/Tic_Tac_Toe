@@ -11,7 +11,8 @@ export default class Chat extends Component {
       messages: [],
       socket: props.socket,
       gameCode: props.gameCode,
-      name: props.name
+      name: props.name,
+      playerValue: props.playerValue
     };
   }
 
@@ -27,7 +28,8 @@ export default class Chat extends Component {
       const message = {
         gameCode: this.state.gameCode,
         body,
-        from: this.state.name || 'Me'
+        from: this.state.name || 'Me',
+        playerValue: this.state.playerValue
       };
       this.setState({ messages: [message, ...this.state.messages]});
       this.state.socket.emit('message', message);
@@ -37,7 +39,7 @@ export default class Chat extends Component {
 
   render () {
     const messages = this.state.messages.map((message, index) => {
-      return <li key={index}><b>{message.from}:</b>{message.body}</li>
+      return <li key={index}>{message.playerValue}: <B2>{message.from}</B2>: {message.body}</li>
     })
     return (
       <div>
@@ -48,3 +50,10 @@ export default class Chat extends Component {
     )
   }
 }
+
+const B = styled.b`
+  color: red;
+`;
+const B2 = styled(B)`
+  font-size: 20px;
+`;

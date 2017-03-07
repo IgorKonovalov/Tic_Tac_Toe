@@ -218,6 +218,7 @@ io.on('connection', socket => {
       data.from = socket.id;
     }
     socket.broadcast.to(data.gameCode).emit('message', {
+      playerValue: data.playerValue,
       body: data.body,
       from: data.from
     })
