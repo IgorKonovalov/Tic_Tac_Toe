@@ -101,7 +101,7 @@ class TicTacToeApp extends Component {
     if(this.state.createCode !== '' && !this.state.start) {
       showRoom =
         <div>
-          <h2>{this.state.createCode}</h2>
+          <span>Send this code: </span><h2>{this.state.createCode}</h2>
           <p>Waiting for opponent...</p>
         </div>
     }
@@ -122,7 +122,7 @@ class TicTacToeApp extends Component {
             <Button onClick={this.createRoom}>Create Game Room</Button>
             <Label>{showRoom}</Label>
             <Input type='text' placeholder='Insert code here...' value={this.state.joinCode} onChange={this.handleChangeJoin} />
-            <Button type="submit" onClick={this.joinRoom}>Join Game</Button>
+            <Button type='submit' onClick={this.joinRoom}>Join Game</Button>
           </Form>
         </div>
     }

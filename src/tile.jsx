@@ -53,7 +53,7 @@ export default class Tile extends Component {
           value: this.state.playerValue
         });
       } else {
-        console.log("cannot press")
+        console.log('cannot press')
       }
     }
   }

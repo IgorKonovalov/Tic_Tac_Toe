@@ -12,9 +12,9 @@ const io = socketIo(server);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Логика и обработка данных
+// Logic and data manipulation
 
-// прототип доски
+// board prototype
 
 const blankBoard = [
   ['', '', ''],
@@ -22,7 +22,7 @@ const blankBoard = [
   ['', '', '']
 ];
 
-// объект игроков
+// players object
 
 const players = {
   one: {
@@ -39,7 +39,7 @@ const players = {
 
 
 
-// структура данных, описывающая игры:
+// data structure for storing:
 //
 // gameBoardStore = {
 //   roomCode: {
@@ -52,15 +52,15 @@ const players = {
 
 let gameBoardStore = {};
 
-// логика проверки на выигрыш / ничью проста - вместо того, чтобы писать отдельные тесты для рядов/столбцов/диагоналей мы преобразовываем массив доски так, чтоб можно было использовать только один тип проверки.
+// logic for checking board for win/draft is simple - instead of many tests on one array, we transpose board array, including diagonals to match only rows
 
-// функция transpose принимает оригинальный массив и возвращает транспонированый - столбцы становятся строками, а строки — столбцами
+// function transpose gets original array and returns transposed columns => rows
 
 function transpose(array) {
     return array[0].map((_, index) => array.map(row => row[index]));
 }
 
-// функция diagonals принимает оригинальный массив и возвращает массив диагоналей
+// function diagonals gets original array and returns diagonals => rows
 
 function diagonals(board) {
   const reversed = board.slice().reverse();
@@ -70,21 +70,21 @@ function diagonals(board) {
   ];
 }
 
-// Проверки:
+// Tests:
 
-// anyEmptyCells: проверка на наличие пустых клеток, принимает массив и возвращает true если хотя бы одна из клеток пуста
+// anyEmptyCells: Gets array and returns true if any of cells is empty
 
 function anyEmptyCells(board) {
   return board.some(row => row.some(cell => !cell));
 }
 
-// cellsContainChar: проверка что данный row полностью состоит из данного character, возвращает true/false
+// cellsContainChar: tests row for given character, if row consists of this character only, returns true
 
 function cellsContainChar(character, row) {
   return row.every(cell => cell === character);
 }
 
-// функция высшего порядка rowContainsChar собирает полученные массивы (оригинальный, транспонированый и диагонали) в один и проверяет, присутствует ли в строке данный символ, возвращает true/false
+// rowContainsChar concatinates original, transposed and diagonals array into one and checks for given character
 
 function rowContainsChar(character, board) {
   return [].concat(board, transpose(board), diagonals(board))
@@ -93,7 +93,7 @@ function rowContainsChar(character, board) {
   });
 }
 
-// финальная проверка
+// final check returns winning/draw message and gamestate: false for triggering end of game
 
 function checkWin(board) {
   if (rowContainsChar(players.one.char, board)) {
@@ -104,13 +104,6 @@ function checkWin(board) {
   }
   return { message: 'Draw!', gameState: anyEmptyCells(board) };
 }
-
-// возврат доски в начальное состояние
-
-function resetBoard(gameRoom) {
-  return gameBoardStore[gameRoom].gameBoard = blankBoard;
-}
-
 
 
 
@@ -137,12 +130,12 @@ io.on('connection', socket => {
     }
   });
 
-  // присоединяем игрока к комнате
+  // connecting player to room (using roomCode given bu host player)
 
   socket.on('join room', roomCode => {
-      // Проверяем что комната уже присутствует в списке.
+      // Check if room is in the data list.
       if (gameBoardStore.hasOwnProperty(roomCode)) {
-        // Проверяем что socket.id клиентов не совпадают.
+        // Check for socket.id of players is not same
         if (socket.id !== gameBoardStore[roomCode]['player1']) {
           console.log('second player joined');
           // Присоединяем второго игрока.
@@ -150,14 +143,14 @@ io.on('connection', socket => {
           gameBoardStore[roomCode]['player2'] = playerTwo;
           console.log('now with second player: ', gameBoardStore[roomCode]);
           socket.join(roomCode);
-          io.in(roomCode).emit('game start', 'haha'); // отсылаем сообщение участникам комнаты
+          io.in(roomCode).emit('game start', 'haha');
         }
       } else {
         console.log('There is no such room in room list');
       }
   });
 
-  // инициализируем и передаем игрокам обновление доски => 'update board'
+  // updating boards in case of click, also checking winning condition, and if yes, sending message and finish game
 
   socket.on('click', data => {
     if (data.gameCode in gameBoardStore) {
@@ -173,7 +166,6 @@ io.on('connection', socket => {
       console.log('Sending for update: ', dataObject);
       io.in(data.gameCode).emit('update board', dataObject);
 
-      // Тестируем на выигрыш.
       let winResult = checkWin(gameBoardStore[data.gameCode].gameBoard);
 
       if (!winResult.gameState) {
@@ -186,7 +178,7 @@ io.on('connection', socket => {
   });
 
 
-  // удаляем комнату если клиент теряет связь с сервером
+  // removing room if client have lost connection
 
   socket.on('disconnect', () => {
     console.log('disconnected!');
