@@ -86,29 +86,29 @@ class TicTacToeApp extends Component {
     if(this.state.createCode !== ''){
       showRoom =
         <div>
-          <TextBig>{this.state.createCode}</TextBig>
-          <TextBig>Ожидаем противника...</TextBig>
+          <h2>{this.state.createCode}</h2>
+          <h2>Waiting for opponent...</h2>
         </div>
     }
 
     return (
     <AppContainer>
       <TicTacToeContainer>
-        <InnerContainer onClick={this.createRoom}>
+        <div onClick={this.createRoom}>
           <button>Create Game Room</button>
-        </InnerContainer>
+        </div>
         {showRoom}
-        <BottomInnerContainer>
-          <Input value={this.state.joinCode} onChange={this.handleChangeJoin} />
-        </BottomInnerContainer>
-        <InnerContainer>
+        <div>
+          <input value={this.state.joinCode} onChange={this.handleChangeJoin} />
+        </div>
+        <div>
           <button onClick={this.joinRoom}>Join Game</button>
-        </InnerContainer>
+        </div>
         {this.state.start ? <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} /> : null}
       </TicTacToeContainer>
       <ChatContainer>
         <span>Введите свое имя: </span>
-        <Input onChange={this.handleChangeName}/>
+        <input onChange={this.handleChangeName}/>
         {this.state.start ? <Chat socket={this.socket} gameCode={this.state.gameCode} name={this.state.playerName}/> : null}
       </ChatContainer>
     </AppContainer>
@@ -117,18 +117,6 @@ class TicTacToeApp extends Component {
 }
 
 // Стили
-
-const TextBig = styled.p`
-  color: black;
-  font-size: 20px;
-  text-align: left;
-  padding-left: 10px;
-`;
-
-const TextSmall = styled.p`
-  color: black;
-  font-size: 16px;
-`;
 
 const AppContainer = styled.div`
   display: flex;
@@ -140,37 +128,10 @@ const TicTacToeContainer = styled.div`
   width: 45%;
   flex: 1;
   align-items: center;
-  background-color: #FFFFFF;
-  padding: 10px;
-  padding-top: 20px;
 `;
 
 const ChatContainer = styled.div`
   width: 45%;
-`;
-
-
-const InnerContainer = styled.div`
-  justify-content: center;
-  padding-left: 10px;
-  padding-right: 10px;
-  height: 20px;
-`;
-
-const BottomInnerContainer = styled.div`
-  align-items: center;
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-top: 20px;
-`;
-
-const Input = styled.input`
-  height: 40px;
-  font-size: 20px;
-  border-width: 1px;
-  width: 120px;
-  padding: 10px;
-  margin-bottom: 20px;
 `;
 
 
