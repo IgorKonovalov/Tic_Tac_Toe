@@ -65,13 +65,12 @@ const TileContainer = styled.div`
   width: 150px;
   border-radius: 5px;
   border: 1px solid #FFF;
-  border-color: #FFF;
   &:hover {
     box-shadow: inset 0px 0px 16px #FFF;
   }
 `;
 
 const TileText = styled.p`
-  font: 100px sans-serif;
+  font: 120px sans-serif;
   color: #FFF;
 `;

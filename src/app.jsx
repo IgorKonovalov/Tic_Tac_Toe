@@ -21,13 +21,17 @@ class TicTacToeApp extends Component {
       playerValue: '',
       playerNum: '',
       gameCode: '',
-      playerName: ''
+      playerName: '',
+      nameSubmitted: false
     }
 
     this.createRoom = this.createRoom.bind(this);
     this.joinRoom = this.joinRoom.bind(this);
     this.handleChangeJoin = this.handleChangeJoin.bind(this);
     this.handleChangeName = this.handleChangeName.bind(this);
+    this.handleSubmitName = this.handleSubmitName.bind(this);
+    this.handleSubmitGame = this.handleSubmitGame.bind(this);
+
   }
 
   componentWillMount(){
@@ -49,9 +53,20 @@ class TicTacToeApp extends Component {
   handleChangeJoin(event) {
     this.setState({ joinCode: event.target.value });
   }
+
   handleChangeName(event) {
     this.setState({ playerName: event.target.value });
   }
+
+  handleSubmitName(event) {
+    this.setState({ nameSubmitted: true })
+    event.preventDefault();
+  }
+
+  handleSubmitGame(event) {
+    event.preventDefault();
+  }
+
 
 
   createRoom(){
@@ -83,35 +98,56 @@ class TicTacToeApp extends Component {
 
   render() {
     let showRoom;
-    if(this.state.createCode !== ''){
+    if(this.state.createCode !== '' && !this.state.start) {
       showRoom =
         <div>
           <h2>{this.state.createCode}</h2>
           <h2>Waiting for opponent...</h2>
         </div>
     }
+    let showNameInput;
+    if (!this.state.nameSubmitted) {
+      showNameInput =
+        <form onSubmit={this.handleSubmitName}>
+          <label>
+            Name:
+            <input type="text" value={this.state.playerName} onChange={this.handleChangeName} />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+    }
+    let showCreateRoom;
+    if (!this.state.start && this.state.nameSubmitted) {
+      showCreateRoom =
+        <div>
+          <div>
+            <button onClick={this.createRoom}>Create Game Room</button>
+          </div>
+          <form onSubmit={this.handleSubmitGame}>
+            <label>
+              Insert code here:
+              <input type='text' value={this.state.joinCode} onChange={this.handleChangeJoin} />
+            </label>
+            <button type="submit" onClick={this.joinRoom}>Join Game</button>
+          </form>
+        </div>
+    }
 
     return (
-    <AppContainer>
-      <TicTacToeContainer>
-        <div onClick={this.createRoom}>
-          <button>Create Game Room</button>
-        </div>
-        {showRoom}
-        <div>
-          <input value={this.state.joinCode} onChange={this.handleChangeJoin} />
-        </div>
-        <div>
-          <button onClick={this.joinRoom}>Join Game</button>
-        </div>
-        {this.state.start ? <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} /> : null}
-      </TicTacToeContainer>
-      <ChatContainer>
-        <span>Введите свое имя: </span>
-        <input onChange={this.handleChangeName}/>
-        {this.state.start ? <Chat socket={this.socket} gameCode={this.state.gameCode} name={this.state.playerName}/> : null}
-      </ChatContainer>
-    </AppContainer>
+    <div>
+      {showNameInput}
+      {showCreateRoom}
+      {showRoom}
+      {this.state.start ?
+      <AppContainer>
+        <TicTacToeContainer>
+          <Board socket={this.socket} playerValue={this.state.playerValue} playerNum={this.state.playerNum} gameCode={this.state.gameCode} />
+        </TicTacToeContainer>
+        <ChatContainer>
+          <Chat socket={this.socket} gameCode={this.state.gameCode} name={this.state.playerName}/>
+        </ChatContainer>
+      </AppContainer> : null}
+    </div>
     );
   }
 }
@@ -121,17 +157,20 @@ class TicTacToeApp extends Component {
 const AppContainer = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-around;
 `;
 
 const TicTacToeContainer = styled.div`
   width: 45%;
+  min-width: 450px;
   flex: 1;
   align-items: center;
 `;
 
 const ChatContainer = styled.div`
   width: 45%;
+  min-width: 450px;
 `;
 
 
