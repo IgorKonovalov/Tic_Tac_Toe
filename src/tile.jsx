@@ -25,7 +25,7 @@ export default class Tile extends Component {
     })
   }
 
-  clickTile() {
+  clickTile = () => {
 
     console.log('player num', this.props.playerNum);
     console.log('player turn', this.props.playerTurn);

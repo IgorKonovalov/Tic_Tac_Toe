@@ -19,7 +19,6 @@ export default class Board extends Component {
       playerTurn : '1',
       sound: false
     }
-    this.renderBoard = this.renderBoard.bind(this);
   }
 
   componentDidMount(){
@@ -40,7 +39,7 @@ export default class Board extends Component {
   }
 
 
-  renderBoard() {
+  renderBoard = () => {
   	return this.state.gameBoard.map((rows, rowIndex) => {
   		let row = rows.map((value, colIndex) => {
   			let coord = colIndex.toString() + rowIndex.toString();

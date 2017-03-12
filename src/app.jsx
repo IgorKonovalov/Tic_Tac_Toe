@@ -11,7 +11,7 @@ let gameCode;
 
 class TicTacToeApp extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       createCode : '',
@@ -24,14 +24,6 @@ class TicTacToeApp extends Component {
       playerName: '',
       nameSubmitted: false
     }
-
-    this.createRoom = this.createRoom.bind(this);
-    this.joinRoom = this.joinRoom.bind(this);
-    this.handleChangeJoin = this.handleChangeJoin.bind(this);
-    this.handleChangeName = this.handleChangeName.bind(this);
-    this.handleSubmitName = this.handleSubmitName.bind(this);
-    this.handleSubmitGame = this.handleSubmitGame.bind(this);
-
   }
 
   componentWillMount(){
@@ -50,26 +42,26 @@ class TicTacToeApp extends Component {
     })
   }
 
-  handleChangeJoin(event) {
+  handleChangeJoin = event => {
     this.setState({ joinCode: event.target.value });
   }
 
-  handleChangeName(event) {
+  handleChangeName = event => {
     this.setState({ playerName: event.target.value });
   }
 
-  handleSubmitName(event) {
+  handleSubmitName = event => {
     this.setState({ nameSubmitted: true })
     event.preventDefault();
   }
 
-  handleSubmitGame(event) {
+  handleSubmitGame = event => {
     event.preventDefault();
   }
 
 
 
-  createRoom(){
+  createRoom = () => {
     let codeOne = parseInt(Math.random() * (9 - 1) + 1);
     let codeTwo = parseInt(Math.random() * (9 - 1) + 1);
     let codeThree = parseInt(Math.random() * (9 - 1) + 1);
@@ -84,7 +76,8 @@ class TicTacToeApp extends Component {
     this.socket.emit('create room', roomCode);
   }
 
-  joinRoom(){
+  joinRoom = () => {
+
     this.socket.emit('join room', this.state.joinCode);
 
     this.setState({
